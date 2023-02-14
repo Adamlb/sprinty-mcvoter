@@ -1,0 +1,9 @@
+{
+  "name": "sprintvote",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Adamlb/sprintvote.git",
+  "author": "Adam Black <adam.black@rafflebox.ca>",
+  "license": "UNLICENSED",
+  "private": true
+}
