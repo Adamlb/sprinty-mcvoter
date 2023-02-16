@@ -110,9 +110,6 @@ class Room extends EventEmitter {
 
     client.once('disconnected', this.boundClientDisconnected);
 
-    // client joins a different room, remove from this one
-    client.once('joinRoom', this.boundClientJoinedAnotherRoom);
-
     this.sendAll('clientUpdate', JSON.stringify(this.clientData()));
 
     console.info(`Client: ${client} Joined room: ${this.code}`);
@@ -144,7 +141,6 @@ class Room extends EventEmitter {
   public removeClient(client: Client) {
     client.off('vote', this.boundClientVoted);
     client.off('disconnected', this.boundClientDisconnected);
-    client.off('joinRoom', this.boundClientJoinedAnotherRoom);
 
     delete this.clientMap[client.id];
 
@@ -184,7 +180,7 @@ export class ClientService {
 
     this.clientMap[client.id] = client;
 
-    client.on(
+    client.once(
       'joinRoom',
       ({ roomCode, name }: { name: string; roomCode: string }) => {
         const room = this.findOrCreateRoom(roomCode);
