@@ -74,7 +74,8 @@ class Client extends EventEmitter {
 
     if (action && data) {
       try {
-        this.emit(action, JSON.parse(data));
+        console.log('emitting message', { action, data });
+        this.emit(action, this, JSON.parse(data));
       } catch (error) {
         if (error instanceof SyntaxError) {
           console.error(`Invalid json in incoming message ${message}`);
@@ -89,10 +90,11 @@ class Client extends EventEmitter {
 class Room extends EventEmitter {
   code: string;
   clientMap: Record<string, Client> = {};
-  voteMap: Record<string, number> = {};
-  boundClientVoted: (client: Client, vote: number) => void;
+  voteMap: Record<string, number | null> = {};
+  boundClientVoted: (client: Client, paylod: { vote: number }) => void;
   boundClientDisconnected: (client: Client) => void;
   boundClientJoinedAnotherRoom: (client: Client) => void;
+  boundClearVotes: () => void;
 
   constructor(code: string) {
     super();
@@ -100,6 +102,7 @@ class Room extends EventEmitter {
     this.boundClientVoted = this.clientVoted.bind(this);
     this.boundClientDisconnected = this.clientDisconnected.bind(this);
     this.boundClientJoinedAnotherRoom = this.clientJoinedAnotherRoom.bind(this);
+    this.boundClearVotes = this.clearVotes.bind(this);
     console.info(`New Room ${this.code}`);
   }
 
@@ -107,6 +110,7 @@ class Room extends EventEmitter {
     this.clientMap[client.id] = client;
 
     client.on('vote', this.boundClientVoted);
+    client.on('clearVotes', this.boundClearVotes);
 
     client.once('disconnected', this.boundClientDisconnected);
 
@@ -115,15 +119,21 @@ class Room extends EventEmitter {
     console.info(`Client: ${client} Joined room: ${this.code}`);
   }
 
+  private clearVotes() {
+    this.voteMap = {};
+    this.sendVotes();
+  }
+
   private clientData() {
     const result = [];
+    console.log(this.voteMap);
     for (const clientId in this.clientMap) {
       const client = this.clientMap[clientId];
 
       result.push({
         name: client.name,
         id: client.id,
-        currentVote: this.voteMap[clientId] || null,
+        currentVote: this.voteMap[clientId],
       });
     }
 
@@ -152,8 +162,11 @@ class Room extends EventEmitter {
     console.info(`Client ${client} Left room ${this.code}`);
   }
 
-  private clientVoted(client: Client, vote: number) {
-    this.voteMap[client.id] = vote;
+  private clientVoted(
+    client: Client,
+    { vote }: { vote: number | string | null }
+  ) {
+    this.voteMap[client.id] = vote === null ? null : Number(vote);
 
     this.sendVotes();
   }
@@ -182,7 +195,10 @@ export class ClientService {
 
     client.once(
       'joinRoom',
-      ({ roomCode, name }: { name: string; roomCode: string }) => {
+      (
+        client: Client,
+        { roomCode, name }: { name: string; roomCode: string }
+      ) => {
         const room = this.findOrCreateRoom(roomCode);
         client.name = name;
         room.addClient(client);

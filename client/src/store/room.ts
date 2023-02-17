@@ -25,11 +25,27 @@ export const useRoomStore = defineStore('room', {
       socket: null,
     };
   },
-  // could also be defined as
-  // state: () => ({ count: 0 })
+  getters: {
+    averageVote(state) {
+      const voteSum = state.users.reduce(
+        (total, user) => total + user.currentVote || 0,
+        0
+      );
+
+      const totalVotes = state.users.filter(
+        (user) => !Number.isNaN(user.currentVote)
+      ).length;
+
+      return (voteSum / totalVotes).toFixed(1);
+    },
+  },
   actions: {
     async joinRoom({ name, roomCode }: { name: string; roomCode: string }) {
+      if (this.socket) {
+        this.leaveRoom();
+      }
       this.socket = new WebSocket(websocketUrl);
+      this.roomCode = roomCode;
 
       this.socket.onopen = (event) => {
         console.log('Connected to websocket');
@@ -40,8 +56,26 @@ export const useRoomStore = defineStore('room', {
 
       this.socket.onmessage = (event) => {
         console.log('message received');
-        console.log(event);
+        const [action, data] = event.data.split('::');
+
+        if (action === 'clientUpdate') {
+          const parsedData = JSON.parse(data);
+
+          this.users = parsedData;
+        }
       };
+    },
+    async leaveRoom() {
+      this.socket?.close();
+      this.users = [];
+      this.socket = null;
+      this.roomCode = '';
+    },
+    async castVote(vote: number | null) {
+      this.socket?.send(`vote::${JSON.stringify({ vote })}`);
+    },
+    async clearVotes() {
+      this.socket?.send(`clearVotes::{}`);
     },
   },
 });
