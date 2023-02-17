@@ -18,4 +18,6 @@ wss.on('connection', function connection(ws) {
   ws.on('error', console.error);
 });
 
+server.listen(config.websocketPort);
+
 console.log(`Websocket server listening on port ${config.websocketPort}`);
