@@ -5,7 +5,8 @@ import { useRoomStore } from '../store/room';
 
 const roomStore = useRoomStore();
 
-const { users, roomCode, isConnected, averageVote } = storeToRefs(roomStore);
+const { users, roomCode, isConnected, averageVote, currentVote } =
+  storeToRefs(roomStore);
 
 const castVote = (vote: number | null) => {
   roomStore.castVote(vote);
@@ -15,36 +16,50 @@ const clearVotes = () => {
   roomStore.clearVotes();
 };
 
+const cardClass = (vote: number | null) => {
+  const css: string[] = ['vote-card'];
+
+  if (vote == currentVote.value) {
+    css.push('current-vote');
+  }
+
+  return css.join(' ');
+};
+
 const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
 </script>
 
 <template>
   <div v-if="isConnected">
-    <h1>Table</h1>
+    <h1>{{ roomCode }}</h1>
 
-    <div>Room: {{ roomCode }}</div>
+    <div>
+      <h3>Current Votes</h3>
+      <div class="user-votes-container">
+        <div v-for="user of users" class="user-vote-card">
+          <div>{{ user.name }}</div>
+          <div>
+            {{ typeof user.currentVote !== 'number' ? '-' : user.currentVote }}
+          </div>
+        </div>
+      </div>
+      <div class="average">Average: {{ averageVote }}</div>
+      <button type="button" class="button" @click="clearVotes">
+        Clear Votes
+      </button>
+    </div>
 
     <div>
       <h3>Your Vote</h3>
       <div class="vote-container">
         <div
           v-for="vote of voteOptions"
-          class="vote-card"
+          :class="cardClass(vote)"
           @click="castVote(vote)"
         >
           {{ vote === null ? '-' : vote }}
         </div>
       </div>
-    </div>
-
-    <div>
-      <h3>Current Votes</h3>
-      <div v-for="user of users">
-        <span>{{ user.name }}</span>
-        <span>{{ user.currentVote === null ? '-' : user.currentVote }}</span>
-      </div>
-      <div>Average: {{ averageVote }}</div>
-      <button type="button" @click="clearVotes">Clear Votes</button>
     </div>
   </div>
 </template>
@@ -57,13 +72,43 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
   align-items: center;
 }
 .vote-card {
+  min-width: 100px;
   border: 1px solid black;
   border-radius: 3px;
   flex-grow: 1;
   background-color: white;
   color: black;
   font-size: 25px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  cursor: pointer;
+}
+.current-vote {
+  background-color: cadetblue;
+}
+
+.user-votes-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-vote-card {
   padding-top: 10px;
   padding-bottom: 10px;
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  border-radius: 3px;
+  flex-grow: 1;
+  font-size: 15px;
+}
+
+.average {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 25px;
+  margin-bottom: 10px;
 }
 </style>

@@ -9,6 +9,7 @@ interface User {
 
 interface RoomState {
   roomCode: string;
+  currentVote: null | number;
   socket: null | WebSocket;
   isConnected: boolean;
   users: User[];
@@ -21,6 +22,7 @@ export const useRoomStore = defineStore('room', {
     return {
       roomCode: '',
       isConnected: false,
+      currentVote: null,
       users: [],
       socket: null,
     };
@@ -33,8 +35,12 @@ export const useRoomStore = defineStore('room', {
       );
 
       const totalVotes = state.users.filter(
-        (user) => !Number.isNaN(user.currentVote)
+        (user) => typeof user.currentVote === 'number'
       ).length;
+
+      if (totalVotes === 0) {
+        return 0;
+      }
 
       return (voteSum / totalVotes).toFixed(1);
     },
@@ -72,9 +78,11 @@ export const useRoomStore = defineStore('room', {
       this.roomCode = '';
     },
     async castVote(vote: number | null) {
+      this.currentVote = vote;
       this.socket?.send(`vote::${JSON.stringify({ vote })}`);
     },
     async clearVotes() {
+      this.currentVote = null;
       this.socket?.send(`clearVotes::{}`);
     },
   },

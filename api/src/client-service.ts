@@ -130,10 +130,11 @@ class Room extends EventEmitter {
     for (const clientId in this.clientMap) {
       const client = this.clientMap[clientId];
 
+      const vote = this.voteMap[clientId];
       result.push({
         name: client.name,
         id: client.id,
-        currentVote: this.voteMap[clientId],
+        currentVote: typeof vote === 'number' ? vote : null,
       });
     }
 
