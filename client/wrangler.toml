@@ -1,0 +1,6 @@
+name = "sprintvote-client"
+main = "worker-site/index.ts"
+compatibility_date = "2023-02-17"
+
+[site]
+bucket = "./dist"
