@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "publish": "build && wrangler publish"
   },
   "dependencies": {
     "dotenv": "^16.0.3",

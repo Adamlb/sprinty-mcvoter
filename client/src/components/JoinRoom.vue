@@ -9,7 +9,9 @@ const name = ref('');
 const { isConnected } = storeToRefs(roomStore);
 
 const joinTable = async () => {
-  await roomStore.joinRoom({ name: name.value, roomCode: roomCode.value });
+  if (name.value && roomCode.value) {
+    await roomStore.joinRoom({ name: name.value, roomCode: roomCode.value });
+  }
 };
 </script>
 
