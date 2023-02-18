@@ -13,6 +13,7 @@ interface RoomState {
   socket: null | WebSocket;
   isConnected: boolean;
   users: User[];
+  hideVotes: boolean;
 }
 
 const websocketUrl = config.websocketUrl;
@@ -25,6 +26,7 @@ export const useRoomStore = defineStore('room', {
       currentVote: null,
       users: [],
       socket: null,
+      hideVotes: true,
     };
   },
   getters: {
@@ -68,6 +70,10 @@ export const useRoomStore = defineStore('room', {
           const parsedData = JSON.parse(data);
 
           this.users = parsedData;
+        } else if (action === 'setHideVotes') {
+          const parsedData = JSON.parse(data);
+
+          this.hideVotes = parsedData.hideVotes;
         }
       };
     },

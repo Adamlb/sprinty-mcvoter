@@ -5,7 +5,7 @@ import { useRoomStore } from '../store/room';
 
 const roomStore = useRoomStore();
 
-const { users, roomCode, isConnected, averageVote, currentVote } =
+const { users, roomCode, isConnected, averageVote, currentVote, hideVotes } =
   storeToRefs(roomStore);
 
 const castVote = (vote: number | null) => {
@@ -26,6 +26,17 @@ const cardClass = (vote: number | null) => {
   return css.join(' ');
 };
 
+const voteDisplay = (vote: number | null | undefined) => {
+  if (typeof vote === 'undefined') {
+    // hasn't voted
+    return '-';
+  } else if (hideVotes.value) {
+    return '?';
+  } else {
+    return typeof vote === 'number' ? vote : '-';
+  }
+};
+
 const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
 </script>
 
@@ -39,7 +50,7 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
         <div v-for="user of users" class="user-vote-card">
           <div>{{ user.name }}</div>
           <div>
-            {{ typeof user.currentVote !== 'number' ? '-' : user.currentVote }}
+            {{ voteDisplay(user.currentVote) }}
           </div>
         </div>
       </div>

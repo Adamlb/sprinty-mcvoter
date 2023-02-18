@@ -91,10 +91,12 @@ class Room extends EventEmitter {
   code: string;
   clientMap: Record<string, Client> = {};
   voteMap: Record<string, number | null> = {};
+  hideVotes = true;
   boundClientVoted: (client: Client, paylod: { vote: number }) => void;
   boundClientDisconnected: (client: Client) => void;
   boundClientJoinedAnotherRoom: (client: Client) => void;
   boundClearVotes: () => void;
+  boundToggleHideVotes: () => void;
 
   constructor(code: string) {
     super();
@@ -103,6 +105,7 @@ class Room extends EventEmitter {
     this.boundClientDisconnected = this.clientDisconnected.bind(this);
     this.boundClientJoinedAnotherRoom = this.clientJoinedAnotherRoom.bind(this);
     this.boundClearVotes = this.clearVotes.bind(this);
+    this.boundToggleHideVotes = this.toggleHideVotes.bind(this);
     console.info(`New Room ${this.code}`);
   }
 
@@ -111,12 +114,19 @@ class Room extends EventEmitter {
 
     client.on('vote', this.boundClientVoted);
     client.on('clearVotes', this.boundClearVotes);
+    client.on('hideVotes', this.boundToggleHideVotes);
 
     client.once('disconnected', this.boundClientDisconnected);
 
     this.sendAll('clientUpdate', JSON.stringify(this.clientData()));
 
     console.info(`Client: ${client} Joined room: ${this.code}`);
+  }
+
+  private toggleHideVotes() {
+    this.hideVotes = !this.hideVotes;
+
+    this.sendAll('setHideVotes', JSON.stringify({ hideVotes: this.hideVotes }));
   }
 
   private clearVotes() {
@@ -134,7 +144,7 @@ class Room extends EventEmitter {
       result.push({
         name: client.name,
         id: client.id,
-        currentVote: typeof vote === 'number' ? vote : null,
+        currentVote: vote,
       });
     }
 
@@ -158,6 +168,9 @@ class Room extends EventEmitter {
     // no more clients emit empty
     if (Object.keys(this.clientMap).length === 0) {
       this.emit('empty');
+    } else {
+      // if there are clients send fresh room data
+      this.sendVotes();
     }
 
     console.info(`Client ${client} Left room ${this.code}`);
