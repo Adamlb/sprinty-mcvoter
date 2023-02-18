@@ -31,6 +31,8 @@ export const useRoomStore = defineStore('room', {
   },
   getters: {
     averageVote(state) {
+      if (this.hideVotes) return '?';
+
       const voteSum = state.users.reduce(
         (total, user) => total + user.currentVote || 0,
         0
@@ -90,6 +92,10 @@ export const useRoomStore = defineStore('room', {
     async clearVotes() {
       this.currentVote = null;
       this.socket?.send(`clearVotes::{}`);
+    },
+    async setHideVotes(hideVotes: boolean) {
+      this.hideVotes = hideVotes;
+      this.socket?.send(`setHideVotes::${JSON.stringify({ hideVotes })}`);
     },
   },
 });

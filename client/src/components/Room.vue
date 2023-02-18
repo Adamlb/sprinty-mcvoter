@@ -14,6 +14,7 @@ const castVote = (vote: number | null) => {
 
 const clearVotes = () => {
   roomStore.clearVotes();
+  roomStore.setHideVotes(true);
 };
 
 const cardClass = (vote: number | null) => {
@@ -37,6 +38,10 @@ const voteDisplay = (vote: number | null | undefined) => {
   }
 };
 
+const setHideVotes = (hideVotes: boolean) => {
+  roomStore.setHideVotes(hideVotes);
+};
+
 const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
 </script>
 
@@ -55,6 +60,9 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
         </div>
       </div>
       <div class="average">Average: {{ averageVote }}</div>
+      <button type="button" class="button" @click="setHideVotes(false)">
+        Show Votes
+      </button>
       <button type="button" class="button" @click="clearVotes">
         Clear Votes
       </button>

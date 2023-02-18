@@ -96,7 +96,7 @@ class Room extends EventEmitter {
   boundClientDisconnected: (client: Client) => void;
   boundClientJoinedAnotherRoom: (client: Client) => void;
   boundClearVotes: () => void;
-  boundToggleHideVotes: () => void;
+  boundSetHideVotes: () => void;
 
   constructor(code: string) {
     super();
@@ -105,7 +105,7 @@ class Room extends EventEmitter {
     this.boundClientDisconnected = this.clientDisconnected.bind(this);
     this.boundClientJoinedAnotherRoom = this.clientJoinedAnotherRoom.bind(this);
     this.boundClearVotes = this.clearVotes.bind(this);
-    this.boundToggleHideVotes = this.toggleHideVotes.bind(this);
+    this.boundSetHideVotes = this.setHideVotes.bind(this);
     console.info(`New Room ${this.code}`);
   }
 
@@ -114,7 +114,7 @@ class Room extends EventEmitter {
 
     client.on('vote', this.boundClientVoted);
     client.on('clearVotes', this.boundClearVotes);
-    client.on('hideVotes', this.boundToggleHideVotes);
+    client.on('setHideVotes', this.boundSetHideVotes);
 
     client.once('disconnected', this.boundClientDisconnected);
 
@@ -123,7 +123,7 @@ class Room extends EventEmitter {
     console.info(`Client: ${client} Joined room: ${this.code}`);
   }
 
-  private toggleHideVotes() {
+  private setHideVotes() {
     this.hideVotes = !this.hideVotes;
 
     this.sendAll('setHideVotes', JSON.stringify({ hideVotes: this.hideVotes }));
