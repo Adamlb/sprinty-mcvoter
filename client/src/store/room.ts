@@ -76,6 +76,8 @@ export const useRoomStore = defineStore('room', {
           const parsedData = JSON.parse(data);
 
           this.hideVotes = parsedData.hideVotes;
+        } else if (action === 'clearVote') {
+          this.currentVote = null;
         }
       };
     },

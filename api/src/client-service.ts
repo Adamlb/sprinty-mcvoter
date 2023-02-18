@@ -132,6 +132,7 @@ class Room extends EventEmitter {
   private clearVotes() {
     this.voteMap = {};
     this.sendVotes();
+    this.sendAll('clearVote', '{}');
   }
 
   private clientData() {
