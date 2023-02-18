@@ -17,17 +17,24 @@ const joinTable = async () => {
   <div v-if="!isConnected">
     <h1>Join Room</h1>
 
-    <div>
-      <label for="name">Name:</label>
+    <div class="justify-right">
+      <label for="name">Name: </label>
       <input type="text" name="name" v-model="name" />
+    </div>
+    <div class="justify-right">
       <label for="tableCode">Room code: </label>
       <input type="text" name="tableCode" v-model="roomCode" />
+    </div>
+    <div>
       <button @click="joinTable">Join</button>
     </div>
   </div>
 </template>
 
 <style scoped>
+.justify-right {
+  text-align: right;
+}
 .read-the-docs {
   color: #888;
 }
