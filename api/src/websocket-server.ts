@@ -1,14 +1,18 @@
 import { WebSocketServer } from 'ws';
 import { readFileSync } from 'fs';
-import { createServer } from 'https';
+import { createServer, ServerOptions } from 'https';
 
 import { config } from './config';
 import { ClientService } from './client-service';
 
-const server = createServer({
-  cert: readFileSync('/home/ubuntu/cert.pem'),
-  key: readFileSync('/home/ubuntu/key.pem'),
-});
+const serverOptions: ServerOptions = {};
+
+if (config.certificate) {
+  serverOptions.cert = readFileSync(config.certificate.cert);
+  serverOptions.key = readFileSync(config.certificate.key);
+}
+
+const server = createServer(serverOptions);
 
 const wss = new WebSocketServer({ server });
 const clientService = new ClientService();

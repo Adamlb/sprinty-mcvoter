@@ -137,7 +137,7 @@ class Room extends EventEmitter {
 
   private clientData() {
     const result = [];
-    console.log(this.voteMap);
+
     for (const clientId in this.clientMap) {
       const client = this.clientMap[clientId];
 
