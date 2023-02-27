@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import JoinRoom from './components/JoinRoom.vue';
 import Room from './components/Room.vue';
+import logo from './assets/beard-sprint.png';
 </script>
 
 <template>
-  <h1>Sprinty McVoter</h1>
   <JoinRoom />
   <Room />
 </template>

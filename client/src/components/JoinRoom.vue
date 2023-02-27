@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRoomStore } from '../store/room';
+import logo from '../assets/beard-sprint.png';
 
 const roomStore = useRoomStore();
 const roomCode = ref('');
@@ -17,15 +18,27 @@ const joinTable = async () => {
 
 <template>
   <div v-if="!isConnected">
-    <h1>Join Room</h1>
-
-    <div class="justify-right">
-      <label for="name">Name: </label>
-      <input type="text" name="name" v-model="name" />
+    <div>
+      <img v-bind:src="logo" />
     </div>
-    <div class="justify-right">
-      <label for="tableCode">Room code: </label>
-      <input type="text" name="tableCode" v-model="roomCode" />
+
+    <div class="justify-right center w50">
+      <label for="name">Name: </label>
+      <input
+        type="text"
+        name="name"
+        v-model="name"
+        placeholder="sprinty mc sprint face"
+      />
+    </div>
+    <div class="justify-right center w50">
+      <label for="tableCode">Room: </label>
+      <input
+        type="text"
+        name="tableCode"
+        v-model="roomCode"
+        placeholder="room-code"
+      />
     </div>
     <div>
       <button @click="joinTable">Join</button>
@@ -37,6 +50,15 @@ const joinTable = async () => {
 .justify-right {
   text-align: right;
 }
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+.w50 {
+  max-width: 50%;
+}
+
 .read-the-docs {
   color: #888;
 }
