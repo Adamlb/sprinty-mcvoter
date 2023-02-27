@@ -70,6 +70,7 @@ class Client extends EventEmitter {
   }
 
   private handleMessage(message: RawData) {
+    // TODO: These messages should be changed to just be entirely JSON
     const [action, data] = message.toString().split('::');
 
     if (action && data) {
