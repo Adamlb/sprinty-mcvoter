@@ -2,7 +2,7 @@
 
 This is the front-end for SprintyMcVoter
 
-It is built using typescript and vue 3.
+It is built using typescript and Vue 3.
 
 ## Development
 

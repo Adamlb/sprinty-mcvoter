@@ -4,6 +4,7 @@ import Room from './components/Room.vue';
 </script>
 
 <template>
+  <h1>Sprinty McVoter</h1>
   <JoinRoom />
   <Room />
 </template>
