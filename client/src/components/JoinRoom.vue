@@ -19,7 +19,7 @@ const joinTable = async () => {
 <template>
   <div v-if="!isConnected">
     <div>
-      <img v-bind:src="logo" />
+      <img class="logo" v-bind:src="logo" />
     </div>
 
     <div class="justify-right center w50">
@@ -57,6 +57,10 @@ const joinTable = async () => {
 }
 .w50 {
   max-width: 50%;
+}
+
+.logo {
+  border-radius: 40px;
 }
 
 .read-the-docs {
