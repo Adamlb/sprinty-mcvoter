@@ -1,12 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useRoomStore } from '../store/room';
+import MenuBar from '../components/MenuBar.vue';
 
 const roomStore = useRoomStore();
 
-const { users, roomCode, isConnected, averageVote, currentVote, hideVotes } =
+const { users, isConnected, averageVote, currentVote, hideVotes } =
   storeToRefs(roomStore);
+
+const hasAnyoneVoted = computed(() => {
+  return roomStore.hasAnyoneVoted;
+})
+
+const hasUserVoted = (user: any) => {
+  if (user.currentVote) {
+    return 'bg-green-700';
+  }
+};
 
 const castVote = (vote: number | null) => {
   roomStore.castVote(vote);
@@ -21,10 +32,22 @@ const cardClass = (vote: number | null) => {
   const css: string[] = ['vote-card'];
 
   if (vote == currentVote.value) {
-    css.push('current-vote');
+    css.push('bg-green-700');
   }
 
   return css.join(' ');
+};
+
+const getGridPlacement = (index: number) => {
+  if (index === 0) {
+    return 'grid-bottom';
+  } else if (index === 1) {
+    return 'grid-top';
+  } else if (index === 2) {
+    return 'grid-left';
+  } else if (index === 3) {
+    return 'grid-right';
+  }
 };
 
 const voteDisplay = (vote: number | null | undefined) => {
@@ -47,33 +70,44 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
 
 <template>
   <div v-if="isConnected">
-    <h1>{{ roomCode }}</h1>
+    <MenuBar />
 
-    <div>
-      <h3>Current Votes</h3>
-      <div class="user-votes-container">
-        <div v-for="user of users" class="user-vote-card">
-          <div>{{ user.name }}</div>
-          <div>
-            {{ voteDisplay(user.currentVote) }}
+    <div class="mt-16">
+      <div class="grid">
+        <div v-for="(user, index) in users" class="flex flex-col items-center justify-center" :class="getGridPlacement(index)">
+          <div class="flex flex-col items-center justify-center">
+            <p>{{ user.name }}</p>
+            <p class="px-2 py-5 w-10 border text-white border-gray-300 rounded" :class="hasUserVoted(user)">
+              {{ voteDisplay(user.currentVote) }}
+            </p>
           </div>
         </div>
+        <div class="grid-table rounded-3xl bg-neutral-700 w-96 h-36 flex items-center justify-center">
+          <button type="button" class="border border-gray-300 hover:bg-green-700" @click="setHideVotes(false)" v-if="hasAnyoneVoted && hideVotes">
+            Show Votes
+          </button>
+          <button type="button" class="border border-gray-300 hover:bg-green-700" @click="clearVotes" v-if="!hideVotes">
+            Reset Votes
+          </button>
+          <p class="text-white text-xl" v-if="!hasAnyoneVoted && hideVotes">Cast your votes!</p>
+        </div>
       </div>
-      <div class="average">Average: {{ averageVote }}</div>
-      <button type="button" class="button" @click="setHideVotes(false)">
-        Show Votes
-      </button>
-      <button type="button" class="button" @click="clearVotes">
-        Clear Votes
-      </button>
     </div>
 
-    <div>
-      <h3>Your Vote</h3>
-      <div class="vote-container">
+    <div class="mt-20">
+      <div class="average">
+        <p>Average</p>
+        <p class="font-bold">{{ averageVote }}</p>
+      </div>
+    </div>
+
+    <div class="w-full fixed bottom-0 left-0 py-20">
+      <p class="mb-8 text-2xl">Choose your card</p>
+      <div class="flex flex-row items-center justify-center gap-8">
         <div
           v-for="vote of voteOptions"
           :class="cardClass(vote)"
+          class="px-2 py-5 w-12 border text-white border-gray-300 hover:bg-green-700 rounded pointer"
           @click="castVote(vote)"
         >
           {{ vote === null ? '-' : vote }}
@@ -84,50 +118,43 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
 </template>
 
 <style scoped>
-.vote-container {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-}
-.vote-card {
-  min-width: 100px;
-  border: 1px solid black;
-  border-radius: 3px;
-  flex-grow: 1;
-  background-color: white;
-  color: black;
-  font-size: 25px;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  cursor: pointer;
-}
-.current-vote {
-  background-color: cadetblue;
-}
-
-.user-votes-container {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-}
-
-.user-vote-card {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  background-color: white;
-  color: black;
-  border: 1px solid black;
-  border-radius: 3px;
-  flex-grow: 1;
-  font-size: 15px;
-}
 
 .average {
   margin-top: 5px;
   margin-bottom: 5px;
   font-size: 25px;
   margin-bottom: 10px;
+}
+
+.grid {
+  grid-gap: 0.8rem;
+  display: inline-grid;
+  grid-template-areas:
+      "topL top topR"
+      "left table right"
+      "bottomL bottom bottomR";
+  grid-template-columns: 10.4rem 1fr 10.4rem;
+  grid-template-rows: auto 1fr auto;
+  margin: 0 auto;
+  min-height: 200px;
+  width: auto;
+}
+
+.grid-top {
+  grid-area: top;
+}
+.grid-left {
+  grid-area: left;
+}
+
+.grid-right {
+  grid-area: right;
+}
+.grid-bottom {
+  grid-area: bottom;
+}
+
+.grid-table {
+  grid-area: table;
 }
 </style>

@@ -14,6 +14,7 @@ interface RoomState {
   isConnected: boolean;
   users: User[];
   hideVotes: boolean;
+  currentUser: null | string;
 }
 
 const websocketUrl = config.websocketUrl;
@@ -27,6 +28,7 @@ export const useRoomStore = defineStore('room', {
       users: [],
       socket: null,
       hideVotes: true,
+      currentUser: null
     };
   },
   getters: {
@@ -48,6 +50,13 @@ export const useRoomStore = defineStore('room', {
 
       return (voteSum / totalVotes).toFixed(1);
     },
+    hasAnyoneVoted(state) {
+      const totalVotes = state.users.filter(
+        (user) => typeof user.currentVote === 'number'
+      ).length;
+
+      return totalVotes > 0;
+    },
   },
   actions: {
     async joinRoom({ name, roomCode }: { name: string; roomCode: string }) {
@@ -56,6 +65,7 @@ export const useRoomStore = defineStore('room', {
       }
       this.socket = new WebSocket(websocketUrl);
       this.roomCode = roomCode;
+      this.currentUser = name;
 
       this.socket.onopen = (event) => {
         console.log('Connected to websocket');
@@ -86,6 +96,7 @@ export const useRoomStore = defineStore('room', {
       this.users = [];
       this.socket = null;
       this.roomCode = '';
+      this.isConnected = false;
     },
     async castVote(vote: number | null) {
       this.currentVote = vote;
