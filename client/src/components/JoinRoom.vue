@@ -22,7 +22,7 @@ const joinTable = async () => {
       <img class="logo" v-bind:src="logo" />
     </div>
 
-    <div class="justify-right center w50">
+    <div class="justify-right center w50 text-large mt2 mb2">
       <label for="name">Name: </label>
       <input
         type="text"
@@ -31,7 +31,7 @@ const joinTable = async () => {
         placeholder="sprinty mc sprint face"
       />
     </div>
-    <div class="justify-right center w50">
+    <div class="justify-right center w50 text-large">
       <label for="tableCode">Room: </label>
       <input
         type="text"
@@ -64,7 +64,15 @@ const joinTable = async () => {
   border: 2px solid white;
 }
 
-.read-the-docs {
-  color: #888;
+.text-large {
+  font-size: large;
+}
+
+.mb2 {
+  margin-bottom: 2px;
+}
+
+.mt2 {
+  margin-top: 2px;
 }
 </style>
