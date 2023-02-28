@@ -14,6 +14,7 @@ interface RoomState {
   isConnected: boolean;
   users: User[];
   hideVotes: boolean;
+  currentUser: null | string;
 }
 
 const websocketUrl = config.websocketUrl;
@@ -27,6 +28,7 @@ export const useRoomStore = defineStore('room', {
       users: [],
       socket: null,
       hideVotes: true,
+      currentUser: null
     };
   },
   getters: {
@@ -56,6 +58,7 @@ export const useRoomStore = defineStore('room', {
       }
       this.socket = new WebSocket(websocketUrl);
       this.roomCode = roomCode;
+      this.currentUser = name;
 
       this.socket.onopen = (event) => {
         console.log('Connected to websocket');
