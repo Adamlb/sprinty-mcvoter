@@ -50,6 +50,13 @@ export const useRoomStore = defineStore('room', {
 
       return (voteSum / totalVotes).toFixed(1);
     },
+    hasAnyoneVoted(state) {
+      const totalVotes = state.users.filter(
+        (user) => typeof user.currentVote === 'number'
+      ).length;
+
+      return totalVotes > 0;
+    },
   },
   actions: {
     async joinRoom({ name, roomCode }: { name: string; roomCode: string }) {
@@ -89,6 +96,7 @@ export const useRoomStore = defineStore('room', {
       this.users = [];
       this.socket = null;
       this.roomCode = '';
+      this.isConnected = false;
     },
     async castVote(vote: number | null) {
       this.currentVote = vote;
