@@ -28,7 +28,7 @@ const joinTable = async () => {
         type="text"
         name="name"
         v-model="name"
-        placeholder="sprinty mc sprint face"
+        placeholder="Sprinty McSprintFace"
       />
     </div>
     <div class="justify-right center w50 text-large">
