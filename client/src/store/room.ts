@@ -28,7 +28,7 @@ export const useRoomStore = defineStore('room', {
       users: [],
       socket: null,
       hideVotes: true,
-      currentUser: null
+      currentUser: null,
     };
   },
   getters: {
@@ -52,7 +52,7 @@ export const useRoomStore = defineStore('room', {
     },
     hasAnyoneVoted(state) {
       const totalVotes = state.users.filter(
-        (user) => typeof user.currentVote === 'number'
+        (user) => typeof user.currentVote !== 'undefined'
       ).length;
 
       return totalVotes > 0;
