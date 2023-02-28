@@ -119,6 +119,10 @@ class Room extends EventEmitter {
 
     client.once('disconnected', this.boundClientDisconnected);
 
+    client.send(
+      `setHideVotes::${JSON.stringify({ hideVotes: this.hideVotes })}`
+    );
+
     this.sendAll('clientUpdate', JSON.stringify(this.clientData()));
 
     console.info(`Client: ${client} Joined room: ${this.code}`);
