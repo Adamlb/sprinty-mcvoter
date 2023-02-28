@@ -61,6 +61,7 @@ const joinTable = async () => {
 
 .logo {
   border-radius: 40px;
+  border: 2px solid white;
 }
 
 .read-the-docs {
