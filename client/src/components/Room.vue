@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRoomStore } from '../store/room';
 import MenuBar from '../components/MenuBar.vue';
 
 const roomStore = useRoomStore();
 
-const { users, isConnected, averageVote, currentVote, hideVotes } =
-  storeToRefs(roomStore);
-
-const hasAnyoneVoted = computed(() => {
-  return roomStore.hasAnyoneVoted;
-})
+const {
+  users,
+  isConnected,
+  averageVote,
+  currentVote,
+  hideVotes,
+  hasAnyoneVoted,
+} = storeToRefs(roomStore);
 
 const hasUserVoted = (user: any) => {
-  if (user.currentVote) {
+  if (typeof user.currentVote !== 'undefined') {
     return 'bg-green-700';
   }
 };
@@ -74,22 +76,43 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
 
     <div class="mt-16">
       <div class="grid">
-        <div v-for="(user, index) in users" class="flex flex-col items-center justify-center" :class="getGridPlacement(index)">
+        <div
+          v-for="(user, index) in users"
+          class="flex flex-col items-center justify-center"
+          :class="getGridPlacement(index)"
+        >
           <div class="flex flex-col items-center justify-center">
             <p>{{ user.name }}</p>
-            <p class="px-2 py-5 w-10 border text-white border-gray-300 rounded" :class="hasUserVoted(user)">
+            <p
+              class="px-2 py-5 w-10 border text-white border-gray-300 rounded"
+              :class="hasUserVoted(user)"
+            >
               {{ voteDisplay(user.currentVote) }}
             </p>
           </div>
         </div>
-        <div class="grid-table rounded-3xl bg-neutral-700 w-96 h-36 flex items-center justify-center">
-          <button type="button" class="border border-gray-300 hover:bg-green-700" @click="setHideVotes(false)" v-if="hasAnyoneVoted && hideVotes">
+        <div
+          class="grid-table rounded-3xl bg-neutral-700 w-96 h-36 flex items-center justify-center"
+        >
+          <button
+            type="button"
+            class="border border-gray-300 hover:bg-green-700"
+            @click="setHideVotes(false)"
+            v-if="hasAnyoneVoted && hideVotes"
+          >
             Show Votes
           </button>
-          <button type="button" class="border border-gray-300 hover:bg-green-700" @click="clearVotes" v-if="!hideVotes">
+          <button
+            type="button"
+            class="border border-gray-300 hover:bg-green-700"
+            @click="clearVotes"
+            v-if="!hideVotes"
+          >
             Reset Votes
           </button>
-          <p class="text-white text-xl" v-if="!hasAnyoneVoted && hideVotes">Cast your votes!</p>
+          <p class="text-white text-xl" v-if="!hasAnyoneVoted && hideVotes">
+            Cast your votes!
+          </p>
         </div>
       </div>
     </div>
@@ -118,7 +141,6 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
 </template>
 
 <style scoped>
-
 .average {
   margin-top: 5px;
   margin-bottom: 5px;
@@ -130,9 +152,9 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
   grid-gap: 0.8rem;
   display: inline-grid;
   grid-template-areas:
-      "topL top topR"
-      "left table right"
-      "bottomL bottom bottomR";
+    'topL top topR'
+    'left table right'
+    'bottomL bottom bottomR';
   grid-template-columns: 10.4rem 1fr 10.4rem;
   grid-template-rows: auto 1fr auto;
   margin: 0 auto;
