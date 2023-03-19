@@ -170,6 +170,7 @@ class Room extends EventEmitter {
     client.off('disconnected', this.boundClientDisconnected);
 
     delete this.clientMap[client.id];
+    delete this.voteMap[client.id];
 
     // no more clients emit empty
     if (Object.keys(this.clientMap).length === 0) {
