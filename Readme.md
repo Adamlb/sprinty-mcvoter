@@ -1,6 +1,6 @@
 # Sprinty McVoter
 
-Monorepo for Sprinty McVoter. A simple sprint estimation tool built for gaining experience using websockets.
+Monorepo for Sprinty McVoter. A simple sprint estimation tool.
 
 ## Api
 

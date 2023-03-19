@@ -33,7 +33,7 @@ const clearVotes = () => {
 const cardClass = (vote: number | null) => {
   const css: string[] = ['vote-card'];
 
-  if (vote == currentVote.value) {
+  if (vote === currentVote.value) {
     css.push('bg-green-700');
   }
 
