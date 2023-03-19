@@ -71,6 +71,7 @@ export const useRoomStore = defineStore('room', {
         console.log('Connected to websocket');
 
         this.socket?.send(`joinRoom::${JSON.stringify({ name, roomCode })}`);
+
         this.isConnected = true;
       };
 
@@ -90,13 +91,21 @@ export const useRoomStore = defineStore('room', {
           this.currentVote = null;
         }
       };
+
+      this.socket.onerror = (error) => {
+        console.log(error);
+      };
+
+      this.socket.onclose = () => {
+        this.users = [];
+        this.socket = null;
+        this.roomCode = '';
+        this.isConnected = false;
+        console.log('close');
+      };
     },
     async leaveRoom() {
       this.socket?.close();
-      this.users = [];
-      this.socket = null;
-      this.roomCode = '';
-      this.isConnected = false;
     },
     async castVote(vote: number | null) {
       this.currentVote = vote;
