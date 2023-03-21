@@ -48,7 +48,7 @@ export const useRoomStore = defineStore('room', {
         return 0;
       }
 
-      return (voteSum / totalVotes).toFixed(1);
+      return Math.round(voteSum / totalVotes);
     },
     hasAnyoneVoted(state) {
       const totalVotes = state.users.filter(
