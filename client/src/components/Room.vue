@@ -41,14 +41,25 @@ const cardClass = (vote: number | null) => {
 };
 
 const getGridPlacement = (index: number) => {
-  if (index === 0) {
-    return 'grid-bottom';
-  } else if (index === 1) {
-    return 'grid-top';
-  } else if (index === 2) {
-    return 'grid-left';
-  } else if (index === 3) {
-    return 'grid-right';
+  switch (index) {
+    case 0:
+      return 'grid-b';
+    case 1:
+      return 'grid-t';
+    case 2:
+      return 'grid-l';
+    case 3:
+      return 'grid-r';
+    case 4:
+      return 'grid-t-l';
+    case 5:
+      return 'grid-t-r';
+    case 6:
+      return 'grid-b-l';
+    case 7:
+      return 'grid-b-r';
+    default:
+      return '';
   }
 };
 
@@ -74,17 +85,23 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
   <div v-if="isConnected">
     <MenuBar />
 
-    <div class="mt-16">
-      <div class="grid">
+    <div class="mt-24">
+      <div class="grid grid-cols-3 grid-rows-3 gap-4">
+        <div
+          class="grid-item"
+          :class="index === 5 ? 'grid-table' : ''"
+          v-for="index in 9 - users.length"
+          :key="index"
+        ></div>
         <div
           v-for="(user, index) in users"
-          class="flex flex-col items-center justify-center"
+          class="flex flex-col items-center justify-center grid-item"
           :class="getGridPlacement(index)"
         >
           <div class="flex flex-col items-center justify-center">
-            <p>{{ user.name }}</p>
+            <p class="uppercase p-1">{{ user.name }}</p>
             <p
-              class="px-2 py-5 w-10 border text-white border-gray-300 rounded"
+              class="flex items-center justify-center h-16 w-16 border rounded-full text-gray-300 border-4 border-gray-300"
               :class="hasUserVoted(user)"
             >
               {{ voteDisplay(user.currentVote) }}
@@ -92,11 +109,11 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
           </div>
         </div>
         <div
-          class="grid-table rounded-3xl bg-neutral-700 w-96 h-36 flex items-center justify-center"
+          class="grid-table grid-item rounded-3xl bg-neutral-700 w-96 flex items-center justify-center"
         >
           <button
             type="button"
-            class="border border-gray-300 hover:bg-green-700"
+            class="border border-gray-300 border-4 hover:bg-green-700 text-lg"
             @click="setHideVotes(false)"
             v-if="hasAnyoneVoted && hideVotes"
           >
@@ -104,20 +121,23 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
           </button>
           <button
             type="button"
-            class="border border-gray-300 hover:bg-green-700"
+            class="border border-gray-300 border-4 hover:bg-green-700 text-lg"
             @click="clearVotes"
             v-if="!hideVotes"
           >
             Reset Votes
           </button>
-          <p class="text-white text-xl" v-if="!hasAnyoneVoted && hideVotes">
+          <p
+            class="text-white text-2xl uppercase"
+            v-if="!hasAnyoneVoted && hideVotes"
+          >
             Cast your votes!
           </p>
         </div>
       </div>
     </div>
 
-    <div class="mt-20">
+    <div class="mt-10">
       <div class="average">
         <p>Average</p>
         <p class="font-bold">{{ averageVote }}</p>
@@ -130,7 +150,7 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
         <div
           v-for="vote of voteOptions"
           :class="cardClass(vote)"
-          class="px-2 py-5 w-12 border text-white border-gray-300 hover:bg-green-700 rounded pointer"
+          class="px-2 py-5 w-12 border border-4 text-white border-gray-300 hover:bg-green-700 rounded-lg cursor-pointer"
           @click="castVote(vote)"
         >
           {{ vote === null ? '-' : vote }}
@@ -158,22 +178,42 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
   grid-template-columns: 10.4rem 1fr 10.4rem;
   grid-template-rows: auto 1fr auto;
   margin: 0 auto;
-  min-height: 200px;
   width: auto;
 }
 
-.grid-top {
+.grid-item {
+  min-width: 9rem;
+  min-height: 9rem;
+}
+
+.grid-t {
   grid-area: top;
 }
-.grid-left {
+.grid-l {
   grid-area: left;
 }
 
-.grid-right {
+.grid-r {
   grid-area: right;
 }
-.grid-bottom {
+.grid-b {
   grid-area: bottom;
+}
+
+.grid-t-l {
+  grid-area: topL;
+}
+
+.grid-t-r {
+  grid-area: topR;
+}
+
+.grid-b-l {
+  grid-area: bottomL;
+}
+
+.grid-b-r {
+  grid-area: bottomR;
 }
 
 .grid-table {
