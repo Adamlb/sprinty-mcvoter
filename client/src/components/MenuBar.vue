@@ -24,7 +24,7 @@ const leaveRoom = async () => {
       <Menu as="div" class="relative inline-block text-left">
         <div>
           <MenuButton
-            class="inline-flex w-full items-center justify-center px-4 py-2 font-medium text-white focus:outline-none text-lg"
+            class="inline-flex w-full items-center justify-center px-4 py-2 font-medium text-white focus:outline-none"
           >
             {{ currentUser }}
             <ChevronDownIcon
