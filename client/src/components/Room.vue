@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRoomStore } from '../store/room';
 import MenuBar from '../components/MenuBar.vue';
@@ -78,7 +77,7 @@ const setHideVotes = (hideVotes: boolean) => {
   roomStore.setHideVotes(hideVotes);
 };
 
-const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
+const voteOptions = [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 </script>
 
 <template>
@@ -88,12 +87,6 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
     <div class="mt-24">
       <div class="grid grid-cols-3 grid-rows-3 gap-4">
         <div
-          class="grid-item"
-          :class="index === 5 ? 'grid-table' : ''"
-          v-for="index in 9 - users.length"
-          :key="index"
-        ></div>
-        <div
           v-for="(user, index) in users"
           class="flex flex-col items-center justify-center grid-item"
           :class="getGridPlacement(index)"
@@ -101,7 +94,7 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
           <div class="flex flex-col items-center justify-center">
             <p class="uppercase p-1">{{ user.name }}</p>
             <p
-              class="flex items-center justify-center h-16 w-16 border rounded-full text-gray-300 border-4 border-gray-300"
+              class="flex items-center justify-center h-16 w-16 rounded-full text-gray-300 border-4 border-gray-300"
               :class="hasUserVoted(user)"
             >
               {{ voteDisplay(user.currentVote) }}
@@ -113,7 +106,7 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
         >
           <button
             type="button"
-            class="border border-gray-300 border-4 hover:bg-green-700 text-lg"
+            class="border-gray-300 border-4 hover:bg-green-700 text-lg"
             @click="setHideVotes(false)"
             v-if="hasAnyoneVoted && hideVotes"
           >
@@ -121,7 +114,7 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
           </button>
           <button
             type="button"
-            class="border border-gray-300 border-4 hover:bg-green-700 text-lg"
+            class="border-gray-300 border-4 hover:bg-green-700 text-lg"
             @click="clearVotes"
             v-if="!hideVotes"
           >
@@ -150,7 +143,7 @@ const voteOptions = [null, 0, 1, 2, 3, 5, 8, 13];
         <div
           v-for="vote of voteOptions"
           :class="cardClass(vote)"
-          class="px-2 py-5 w-12 border border-4 text-white border-gray-300 hover:bg-green-700 rounded-lg cursor-pointer"
+          class="px-2 py-5 w-12 border-4 text-white border-gray-300 hover:bg-green-700 rounded-lg cursor-pointer"
           @click="castVote(vote)"
         >
           {{ vote === null ? '-' : vote }}
