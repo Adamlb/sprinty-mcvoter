@@ -14,7 +14,8 @@
     "@heroicons/vue": "^2.0.16",
     "dotenv": "^16.0.3",
     "pinia": "^2.0.30",
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "vue-confetti-explosion": "^1.0.2"
   },
   "devDependencies": {
     "@cloudflare/kv-asset-handler": "^0.3.0",
