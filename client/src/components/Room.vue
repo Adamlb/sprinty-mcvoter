@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia';
 import { useRoomStore } from '../store/room';
 import MenuBar from '../components/MenuBar.vue';
+import ConfettiExplosion from 'vue-confetti-explosion';
 
 const roomStore = useRoomStore();
 
@@ -12,6 +13,7 @@ const {
   currentVote,
   hideVotes,
   hasAnyoneVoted,
+  showConfetti,
 } = storeToRefs(roomStore);
 
 const hasUserVoted = (user: any) => {
@@ -20,12 +22,19 @@ const hasUserVoted = (user: any) => {
   }
 };
 
+const votedInSync = () => {
+  const votes = users.value.map((user) => user.currentVote);
+
+  return votes.every((v) => v === votes[0]);
+};
+
 const castVote = (vote: number | null) => {
   roomStore.castVote(vote);
 };
 
 const clearVotes = () => {
   roomStore.clearVotes();
+  roomStore.setShowConfetti(false);
   roomStore.setHideVotes(true);
 };
 
@@ -74,6 +83,9 @@ const voteDisplay = (vote: number | null | undefined) => {
 };
 
 const setHideVotes = (hideVotes: boolean) => {
+  if (hideVotes !== true && votedInSync()) {
+    roomStore.setShowConfetti(true);
+  }
   roomStore.setHideVotes(hideVotes);
 };
 
@@ -132,6 +144,10 @@ const voteOptions = [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
     <div class="mt-10">
       <div class="average">
+        <ConfettiExplosion
+          v-if="showConfetti"
+          :colors="['#86efac', '#4ade80', '#22c55e', '#16a34a', '#15803d']"
+        />
         <p>Average</p>
         <p class="font-bold">{{ averageVote }}</p>
       </div>
@@ -155,6 +171,9 @@ const voteOptions = [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 <style scoped>
 .average {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: 5px;
   margin-bottom: 5px;
   font-size: 25px;
