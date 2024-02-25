@@ -20,10 +20,20 @@
   -webkit-text-size-adjust: 100%;
 }
 
+html {
+  max-height: 100vh;
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-size: 1rem;
   text-transform: uppercase;
+  height: 100%;
+}
+
+#app {
+  height: 100%;
 }
 
 h1 {

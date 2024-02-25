@@ -16,6 +16,8 @@ const {
   showConfetti,
 } = storeToRefs(roomStore);
 
+const screenWidth = window.innerWidth;
+
 const hasUserVoted = (user: any) => {
   if (typeof user.currentVote !== 'undefined') {
     return 'bg-green-700';
@@ -95,7 +97,10 @@ const voteOptions = [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 </script>
 
 <template>
-  <div v-if="isConnected">
+  <div
+    v-if="isConnected"
+    :class="[{ 'overflow-hidden': showConfetti }, 'h-screen']"
+  >
     <MenuBar />
 
     <div class="mt-24">
@@ -144,12 +149,15 @@ const voteOptions = [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
       </div>
     </div>
 
-    <div class="mt-10">
+    <div class="mt-10 flex flex-col items-center w-100">
+      <ConfettiExplosion
+        v-if="showConfetti"
+        :stageHeight="2000"
+        :stageWidth="screenWidth"
+        :particleCount="200"
+        :colors="['#86efac', '#4ade80', '#22c55e', '#16a34a', '#15803d']"
+      />
       <div class="average">
-        <ConfettiExplosion
-          v-if="showConfetti"
-          :colors="['#86efac', '#4ade80', '#22c55e', '#16a34a', '#15803d']"
-        />
         <p>Average</p>
         <p class="font-bold">{{ averageVote }}</p>
       </div>
