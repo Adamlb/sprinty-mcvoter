@@ -34,7 +34,9 @@ const castVote = (vote: number | null) => {
 
 const clearVotes = () => {
   roomStore.clearVotes();
-  roomStore.setShowConfetti(false);
+  if (showConfetti.value !== false) {
+    roomStore.setShowConfetti(false);
+  }
   roomStore.setHideVotes(true);
 };
 
