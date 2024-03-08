@@ -14,6 +14,7 @@ interface RoomState {
   isConnected: boolean;
   users: User[];
   hideVotes: boolean;
+  showConfetti: boolean;
   currentUser: null | string;
 }
 
@@ -28,6 +29,7 @@ export const useRoomStore = defineStore('room', {
       users: [],
       socket: null,
       hideVotes: true,
+      showConfetti: false,
       currentUser: null,
     };
   },
@@ -37,11 +39,11 @@ export const useRoomStore = defineStore('room', {
 
       const voteSum = state.users.reduce(
         (total, user) => total + user.currentVote || 0,
-        0
+        0,
       );
 
       const totalVotes = state.users.filter(
-        (user) => typeof user.currentVote === 'number'
+        (user) => typeof user.currentVote === 'number',
       ).length;
 
       if (totalVotes === 0) {
@@ -52,7 +54,7 @@ export const useRoomStore = defineStore('room', {
     },
     hasAnyoneVoted(state) {
       const totalVotes = state.users.filter(
-        (user) => typeof user.currentVote !== 'undefined'
+        (user) => typeof user.currentVote !== 'undefined',
       ).length;
 
       return totalVotes > 0;
@@ -67,7 +69,7 @@ export const useRoomStore = defineStore('room', {
       this.roomCode = roomCode;
       this.currentUser = name;
 
-      this.socket.onopen = (event) => {
+      this.socket.onopen = () => {
         console.log('Connected to websocket');
 
         this.socket?.send(`joinRoom::${JSON.stringify({ name, roomCode })}`);
@@ -89,6 +91,10 @@ export const useRoomStore = defineStore('room', {
           this.hideVotes = parsedData.hideVotes;
         } else if (action === 'clearVote') {
           this.currentVote = null;
+        } else if (action === 'setShowConfetti') {
+          const parsedData = JSON.parse(data);
+
+          this.showConfetti = parsedData.showConfetti;
         }
       };
 
@@ -118,6 +124,10 @@ export const useRoomStore = defineStore('room', {
     async setHideVotes(hideVotes: boolean) {
       this.hideVotes = hideVotes;
       this.socket?.send(`setHideVotes::${JSON.stringify({ hideVotes })}`);
+    },
+    async setShowConfetti(showConfetti: boolean) {
+      this.showConfetti = showConfetti;
+      this.socket?.send(`setShowConfetti::${JSON.stringify({ showConfetti })}`);
     },
   },
 });

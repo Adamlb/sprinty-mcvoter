@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRoomStore } from '../store/room';
-import logo from '../assets/beard-sprint.png';
 
 const roomStore = useRoomStore();
 const roomCode = ref('');
@@ -26,7 +25,7 @@ const joinTable = async () => {
       />
 
       <div
-        class="p-7 border border-4 white shadow rounded-lg flex flex-col items-center gap-4"
+        class="p-7 border-4 white shadow rounded-lg flex flex-col items-center gap-4"
       >
         <h1 class="mb-4">Join Room</h1>
 

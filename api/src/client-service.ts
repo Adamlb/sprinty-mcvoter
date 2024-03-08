@@ -93,11 +93,13 @@ class Room extends EventEmitter {
   clientMap: Record<string, Client> = {};
   voteMap: Record<string, number | null> = {};
   hideVotes = true;
-  boundClientVoted: (client: Client, paylod: { vote: number }) => void;
+  showConfetti = false;
+  boundClientVoted: (client: Client, payload: { vote: number }) => void;
   boundClientDisconnected: (client: Client) => void;
   boundClientJoinedAnotherRoom: (client: Client) => void;
   boundClearVotes: () => void;
   boundSetHideVotes: () => void;
+  boundSetShowConfetti: () => void;
 
   constructor(code: string) {
     super();
@@ -107,6 +109,7 @@ class Room extends EventEmitter {
     this.boundClientJoinedAnotherRoom = this.clientJoinedAnotherRoom.bind(this);
     this.boundClearVotes = this.clearVotes.bind(this);
     this.boundSetHideVotes = this.setHideVotes.bind(this);
+    this.boundSetShowConfetti = this.setShowConfetti.bind(this);
     console.info(`New Room ${this.code}`);
   }
 
@@ -116,11 +119,16 @@ class Room extends EventEmitter {
     client.on('vote', this.boundClientVoted);
     client.on('clearVotes', this.boundClearVotes);
     client.on('setHideVotes', this.boundSetHideVotes);
+    client.on('setShowConfetti', this.boundSetShowConfetti);
 
     client.once('disconnected', this.boundClientDisconnected);
 
     client.send(
       `setHideVotes::${JSON.stringify({ hideVotes: this.hideVotes })}`
+    );
+
+    client.send(
+      `setShowConfetti::${JSON.stringify({ showConfetti: this.showConfetti })}`
     );
 
     this.sendAll('clientUpdate', JSON.stringify(this.clientData()));
@@ -132,6 +140,15 @@ class Room extends EventEmitter {
     this.hideVotes = !this.hideVotes;
 
     this.sendAll('setHideVotes', JSON.stringify({ hideVotes: this.hideVotes }));
+  }
+
+  private setShowConfetti() {
+    this.showConfetti = !this.showConfetti;
+
+    this.sendAll(
+      'setShowConfetti',
+      JSON.stringify({ showConfetti: this.showConfetti })
+    );
   }
 
   private clearVotes() {
